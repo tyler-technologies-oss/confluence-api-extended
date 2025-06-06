@@ -22,4 +22,6 @@ interface IDocument {
   };
   message: string;
   body: string;
+  spaceKey?: string;
+  parentId?: number;
 }

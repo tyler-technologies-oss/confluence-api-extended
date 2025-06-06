@@ -29,4 +29,28 @@ export default class Content {
         const url = new URL(`${this.config.url}/rest/api/content/${pageid}`);
         return this.httpservice.put(url, body);
     }
+
+    public create(data: IDocument): Promise<IObject> {
+        const body = {
+            title: data.title,
+            version: {
+                number: 1,
+                message: data.message
+            },
+            body: {
+                storage: {
+                    value: data.body,
+                    representation: 'storage'
+                }
+            },
+            type: 'page',
+            ancestors: [{ id: data?.parentId || null }],
+            space: {
+                key: data.spaceKey
+            }
+        };
+
+        const url = new URL(`${this.config.url}/rest/api/content`);
+        return this.httpservice.post(url, body);
+    }
 }
