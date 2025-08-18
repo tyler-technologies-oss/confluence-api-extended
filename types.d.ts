@@ -1,6 +1,8 @@
 interface IConfluenceAPI {
-    token: string;
-    url: string;
+  email?: string;
+  token: string;
+  url: string;
+  cloud: boolean;
 }
 
 interface IResult {

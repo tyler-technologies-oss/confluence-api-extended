@@ -3,7 +3,9 @@ export default class HTTP {
   
     public constructor(public config: IConfluenceAPI) {
       this.headers = new Headers({
-        Authorization: `Bearer ${this.config.token}`,
+        Authorization: this.config.cloud
+          ? "Basic " + Buffer.from(`${this.config.email}:${this.config.token}`).toString("base64")
+          : "Bearer " + this.config.token,
         "Content-Type": "application/json",
         Accept: "application/json",
       });
@@ -19,14 +21,27 @@ export default class HTTP {
         headers: this.headers,
         body: body ? JSON.stringify(body) : undefined,
       });
-      const data = await result.json();
-      console.log(data);
-      if (!result.ok) {
-        const message = data?.error?.message || data?.message || data;
-        return { error: `An error occurred with your request: ${result.status} - ${message}` };
+
+      let data: any;
+      const contentType = result.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await result.json();
+      } else {
+        data = await result.text(); // fallback for HTML/plaintext responses
       }
+
+      if (!result.ok) {
+        const message =
+          (data && (data.error?.message || data.message)) || data || "Unknown error";
+        return {
+          error: `An error occurred with your request: ${result.status} - ${message}`,
+        };
+      }
+
       return data;
     }
+
   
     public get(url: URL): Promise<IObject> {
       return this.request(url, "GET");

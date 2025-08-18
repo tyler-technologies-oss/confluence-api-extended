@@ -4,7 +4,7 @@ export default class Content {
     constructor(private httpservice: HTTP, public config: IConfluenceAPI) {}
 
     public get(pageid: number): Promise<IObject> {
-        const url = new URL(`${this.config.url}/rest/api/content/${pageid}`);
+        const url = new URL(`${this.config.url}/content/${pageid}`);
 
         url.searchParams.append("expand", 'body.storage,version');
         return this.httpservice.get(url);
@@ -26,7 +26,7 @@ export default class Content {
             type: 'page'
         };
 
-        const url = new URL(`${this.config.url}/rest/api/content/${pageid}`);
+        const url = new URL(`${this.config.url}/content/${pageid}`);
         return this.httpservice.put(url, body);
     }
 
@@ -50,7 +50,7 @@ export default class Content {
             }
         };
 
-        const url = new URL(`${this.config.url}/rest/api/content`);
+        const url = new URL(`${this.config.url}/content`);
         return this.httpservice.post(url, body);
     }
 }
